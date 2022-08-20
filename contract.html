@@ -1,0 +1,153 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            color: rgb(2, 0, 128);
+        }
+    </style>
+
+    <script src="menu_bar.js"></script>
+    <script src='https://unpkg.com/xrpl@2.2.3'></script>
+
+    <script>
+
+        var input
+        var files
+        var tx = ""
+
+        function ascii_to_hexa(str) {
+            var arr1 = [];
+            for (var n = 0, l = str.length; n < l; n++) {
+                var hex = Number(str.charCodeAt(n)).toString(16);
+                arr1.push(hex);
+            }
+            return arr1.join('');
+        }
+
+        async function sign() {
+
+            const my_wallet = xrpl.Wallet.fromSeed(document.getElementById('seedText').value)
+            const payload_json = '{"cid":"' + document.getElementById('cidText').value + '","owner_wallet":"' + my_wallet.address + '"}'
+
+            const txJSON = {
+                "Account": my_wallet.address,
+                "TransactionType": "Payment",
+                "Destination": my_wallet.address,
+                "Amount": "0",
+                "Flags": 0,
+                "LastLedgerSequence": 0, // Optional, but recommended.
+                "Fee": "0",
+                "Sequence": 0,
+                "Memos": [
+                    {
+                        "Memo": {
+                            "MemoData": ascii_to_hexa(payload_json)
+                        }
+                    }
+                ]
+            }
+
+            const signed = my_wallet.sign(txJSON)
+            var contract_propose = ascii_to_hexa(JSON.stringify(txJSON))
+            var scriptpubkey = signed.tx_blob
+
+            var getURL = 'http://www.desidapp.it:3001/upload/' + contract_propose + '/' + scriptpubkey
+            let response = await fetch(getURL, { method: 'GET' })
+
+            document.getElementById('btSign').disabled = true
+            document.getElementById('btTx').disabled = false
+
+            let task = await response.text()
+            let output = "### Waiting for task " + task + " ... \n\n### Reply: \n"
+            document.getElementById('txData').value = output
+
+            let reply = ""
+            getURL = 'http://www.desidapp.it:3001/getTask/' + task
+            while (reply=="") {
+                response = await fetch(getURL, { method: 'GET' })
+                try {
+                    reply = await response.text()
+                    output += reply
+                } catch (err) {
+                     console.log(err) }
+                await new Promise(resolve => setTimeout(resolve, 3000))
+            }
+            document.getElementById('txData').value = output
+
+        }
+
+        function openURL(type) {
+            if (type == "cid") {
+                if (document.getElementById('newCID').value != "") {
+                    var url = "https://api.ipfsbrowser.com/ipfs/get.php?hash=" + document.getElementById('newCID').value
+                    window.open(url, '_blank').focus()
+                }
+            }
+            if (type == "tx") {
+                if (tx != "") {
+                    var url = "https://testnet.xrpl.org/validators/" + tx
+                    window.open(url, '_blank').focus()
+                }
+
+            }
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="jumbotron">
+            <h1>DeSI</h1>
+            <p>
+                Decentralize Service Infrastructure
+            </p>
+        </div>
+
+        <!-- MENU NAV -->
+        <script>getNavMenu('Contract')</script>
+
+        <form>
+
+            <div class="form-group">
+                <label>CID</label>
+                <input class="form-control" id="cidText" type="text" placeholder="CID">
+                <label>Seed</label>
+                <input class="form-control" id="seedText" type="text" placeholder="Seed">
+            </div>
+
+            <div class="form-group">
+                <textarea class="form-control" id="txData" rows="10" readonly placeholder="Contract"></textarea>
+                <div class="row">
+                    <div class="col-2">
+                        <button id="btSign" type="button" onclick="sign()" class="btn btn-primary mb-2">Sign</button>
+                    </div>
+                    <div class="col-8">
+                        <input class="form-control" id="newCID" type="text" readonly onclick="openURL('cid')"
+                            style="cursor: pointer" placeholder="New CID">
+                    </div>
+                    <div class="col-2">
+                        <button id="btTx" type="button" onclick="openURL('tx')" class="btn btn-primary mb-2"
+                            disabled=true>View
+                            Tx Hash</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script src='https://unpkg.com/xrpl@2.2.3'></script>
+    <script src='manage_wallet_offline.js'></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        body {
+            color: rgb(2, 0, 128);
+        }
+    </style>
+
+<script src="menu_bar.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="jumbotron">
+            <h1>DeSI</h1>
+            <p>
+                Decentralize Service Infrastructure
+            </p>
+        </div>
+
+        <!-- MENU NAV -->
+        <script>getNavMenu('Create')</script>
+
+
+        <form>
+
+            <div class="form-group">
+                <label id="seedLabel">Seed</label>
+                <input class="form-control" id="seedText" type="text" readonly>
+            </div>
+
+            <div class="form-group">
+                <label id="pubKLabel">Public Key</label>
+                <input class="form-control" id="pubKText" type="text" readonly>
+            </div>
+
+            <div class="form-group">
+                <label id="privKLabel">Private Key</label>
+                <input class="form-control" id="privKText" type="text" readonly>
+
+            </div>
+
+            <div class="form-group">
+                <label id="walletLabel">Wallet address</label>
+                <input class="form-control" id="walletText" type="text" readonly>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-2">
+                        <button id=btAccount type="button" onClick="getAccount()" class="btn btn-primary mb-2">Create
+                            wallet</button>
+                    </div>
+                    <div class="col-2">
+                        <button id=btExport type="button" onClick="exportAccount()" class="btn btn-primary mb-2"
+                            disabled>Export wallet</button>
+                    </div>
+                </div>
+                <textarea class="form-control" id="standbyResultField" rows="3" readonly></textarea>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>
