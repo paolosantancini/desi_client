@@ -42,7 +42,7 @@
                 "Destination": my_wallet.address,
                 "Amount": "0",
                 "Flags": 0,
-                "LastLedgerSequence": 0, // Optional, but recommended.
+                "LastLedgerSequence": 0,
                 "Fee": "0",
                 "Sequence": 0,
                 "Memos": [
@@ -58,27 +58,51 @@
             var contract_propose = ascii_to_hexa(JSON.stringify(txJSON))
             var scriptpubkey = signed.tx_blob
 
+            // Upload contract propose with original cid and owner's sign
             var getURL = 'http://www.desidapp.it:3001/upload/' + contract_propose + '/' + scriptpubkey
             let response = await fetch(getURL, { method: 'GET' })
 
             document.getElementById('btSign').disabled = true
-            document.getElementById('btTx').disabled = false
+            //document.getElementById('btTx').disabled = false
 
             let task = await response.text()
             let output = "### Waiting for task " + task + " ... \n\n### Reply: \n"
             document.getElementById('txData').value = output
 
             let reply = ""
+            // Retrive informations from decentralize rest service
             getURL = 'http://www.desidapp.it:3001/getTask/' + task
-            while (reply=="") {
+            while (reply == "") {
                 response = await fetch(getURL, { method: 'GET' })
                 try {
                     reply = await response.text()
                     output += reply
                 } catch (err) {
-                     console.log(err) }
+                    console.log(err)
+                }
                 await new Promise(resolve => setTimeout(resolve, 3000))
             }
+
+            /*
+            // Retrive new CID
+            getURL = 'http://www.desidapp.it:3001/getCID/'
+            response = await fetch(getURL, { method: 'GET' })
+            try {
+                document.getElementById('newCID').value = await response.text()
+            } catch (err) {
+                console.log(err)
+            }
+
+            // Retrive tx hash
+            getURL = 'http://www.desidapp.it:3001/getTxHash/'
+            response = await fetch(getURL, { method: 'GET' })
+            try {
+                tx = await response.text()
+            } catch (err) {
+                console.log(err)
+            }
+*/
+
             document.getElementById('txData').value = output
 
         }
@@ -132,6 +156,7 @@
                     <div class="col-2">
                         <button id="btSign" type="button" onclick="sign()" class="btn btn-primary mb-2">Sign</button>
                     </div>
+                   <!-- 
                     <div class="col-8">
                         <input class="form-control" id="newCID" type="text" readonly onclick="openURL('cid')"
                             style="cursor: pointer" placeholder="New CID">
@@ -141,6 +166,7 @@
                             disabled=true>View
                             Tx Hash</button>
                     </div>
+                -->
                 </div>
             </div>
 
