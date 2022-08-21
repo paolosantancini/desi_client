@@ -63,7 +63,7 @@
             let response = await fetch(getURL, { method: 'GET' })
 
             document.getElementById('btSign').disabled = true
-            //document.getElementById('btTx').disabled = false
+            document.getElementById('btTx').disabled = false
 
             let task = await response.text()
             let output = "### Waiting for task " + task + " ... \n\n### Reply: \n"
@@ -83,7 +83,6 @@
                 await new Promise(resolve => setTimeout(resolve, 3000))
             }
 
-            /*
             // Retrive new CID
             getURL = 'http://www.desidapp.it:3001/getCID/'
             response = await fetch(getURL, { method: 'GET' })
@@ -101,7 +100,6 @@
             } catch (err) {
                 console.log(err)
             }
-*/
 
             document.getElementById('txData').value = output
 
@@ -116,7 +114,7 @@
             }
             if (type == "tx") {
                 if (tx != "") {
-                    var url = "https://testnet.xrpl.org/validators/" + tx
+                    var url = "https://testnet.xrpl.org/transactions/" + tx
                     window.open(url, '_blank').focus()
                 }
 
@@ -156,7 +154,6 @@
                     <div class="col-2">
                         <button id="btSign" type="button" onclick="sign()" class="btn btn-primary mb-2">Sign</button>
                     </div>
-                   <!-- 
                     <div class="col-8">
                         <input class="form-control" id="newCID" type="text" readonly onclick="openURL('cid')"
                             style="cursor: pointer" placeholder="New CID">
@@ -166,7 +163,6 @@
                             disabled=true>View
                             Tx Hash</button>
                     </div>
-                -->
                 </div>
             </div>
 
