@@ -21,6 +21,7 @@
         var input
         var files
         var tx = ""
+        var desi_dapp = '31.187.76.66'
 
         function ascii_to_hexa(str) {
             var arr1 = [];
@@ -59,7 +60,7 @@
             var scriptpubkey = signed.tx_blob
 
             // Upload contract propose with original cid and owner's sign
-            var getURL = 'http://www.desidapp.it:3001/upload/' + contract_propose + '/' + scriptpubkey
+            var getURL = 'http://'+desi_dapp+':3001/upload/' + contract_propose + '/' + scriptpubkey
             let response = await fetch(getURL, { method: 'GET' })
 
             document.getElementById('btSign').disabled = true
@@ -71,7 +72,7 @@
 
             let reply = ""
             // Retrive informations from decentralize rest service
-            getURL = 'http://www.desidapp.it:3001/getTask/' + task
+            getURL = 'http://'+desi_dapp+':3001/getTask/' + task
             while (reply == "") {
                 response = await fetch(getURL, { method: 'GET' })
                 try {
@@ -84,7 +85,7 @@
             }
 
             // Retrive new CID
-            getURL = 'http://www.desidapp.it:3001/getCID/'
+            getURL = 'http://'+desi_dapp+':3001/getCID/'
             response = await fetch(getURL, { method: 'GET' })
             try {
                 document.getElementById('newCID').value = await response.text()
@@ -93,7 +94,7 @@
             }
 
             // Retrive tx hash
-            getURL = 'http://www.desidapp.it:3001/getTxHash/'
+            getURL = 'http://'+desi_dapp+':3001/getTxHash/'
             response = await fetch(getURL, { method: 'GET' })
             try {
                 tx = await response.text()
